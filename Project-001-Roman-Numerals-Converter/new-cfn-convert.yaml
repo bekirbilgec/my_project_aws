@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  
+Parameters:
+  KeyPair:
+    Description: Select your keypair 
+    Type: AWS::EC2::KeyPair::KeyName
+    
+  
+Resources:
+  ubuntuinstances:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-052efd3df9dad4825
+      InstanceType: t2.micro
+      KeyName: !Ref KeyPair # Daha sonra düzeltilecek
+      SecurityGroups:
+        SecurityGroups
+      UserData: !Base64 |
+        #!/bin/bash
+        apt update -y
+        pip3 install flask
+        apt install git -y
+        cd /home/ubuntu
+        git clone https://github.com/bekirbilgec/my_project_aws.git
+        cd
+        cd /home/ubuntu/my_project_aws/Project-001-Roman-Numerals-Converter/
+        python3 app.py
+  ubuntuSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SHH and HTTP cnf instances # Required
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  
+
+  
+Outputs:
+  WebURL:
+    Description: The roman numerals converter application website 
+    Value: !Sub
+      - http://${PublicAddress}
+      - PublicAddress: !GetAtt CFNInstanceConvert.PublicIp
+   

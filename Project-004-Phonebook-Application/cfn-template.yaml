@@ -109,7 +109,7 @@ Resources:
     Properties:
       AvailabilityZones:
         !GetAZs ""
-      DesiredCapacity: 2
+      DesiredCapacity: 1
       HealthCheckGracePeriod: 300
       HealthCheckType: ELB
       LaunchTemplate:
